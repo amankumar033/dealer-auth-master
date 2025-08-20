@@ -512,15 +512,14 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
       {/* Notification Dropdown */}
       {isOpen && createPortal(
         <div 
-          className="fixed top-16 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-[2147483647] max-h-[600px] overflow-hidden" 
-          style={{ 
-            right: isDesktop ? '400px' : '16px' 
-          }} 
+          className={`fixed top-16 bg-white rounded-xl shadow-2xl border border-gray-200 z-[2147483647] overflow-hidden ${
+            isDesktop ? 'w-96 max-h-[600px]' : 'w-[calc(100vw-32px)] max-w-sm max-h-[70vh] mx-auto left-4 right-4'
+          }`}
           data-notification-panel
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
-            <h3 className="text-lg font-bold text-gray-900">Notifications</h3>
+          <div className={`flex items-center justify-between ${isDesktop ? 'p-4' : 'p-3'} border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50`}>
+            <h3 className={`${isDesktop ? 'text-lg' : 'text-base'} font-bold text-gray-900`}>Notifications</h3>
             <div className="flex items-center space-x-2">
               {unreadCount > 0 && (
                 <button
@@ -560,7 +559,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
           <div className="flex border-b border-gray-200 bg-gray-50">
             <button
               onClick={() => setActiveTab('all')}
-              className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 ${isDesktop ? 'px-4 py-3' : 'px-3 py-2'} ${isDesktop ? 'text-sm' : 'text-xs'} font-medium transition-all duration-200 ${
                 activeTab === 'all' 
                   ? 'text-blue-600 border-b-2 border-blue-600 bg-white' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -570,7 +569,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
             </button>
             <button
               onClick={() => setActiveTab('unread')}
-              className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 ${isDesktop ? 'px-4 py-3' : 'px-3 py-2'} ${isDesktop ? 'text-sm' : 'text-xs'} font-medium transition-all duration-200 ${
                 activeTab === 'unread' 
                   ? 'text-blue-600 border-b-2 border-blue-600 bg-white' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -580,7 +579,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
             </button>
             <button
               onClick={() => setActiveTab('read')}
-              className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 ${isDesktop ? 'px-4 py-3' : 'px-3 py-2'} ${isDesktop ? 'text-sm' : 'text-xs'} font-medium transition-all duration-200 ${
                 activeTab === 'read' 
                   ? 'text-blue-600 border-b-2 border-blue-600 bg-white' 
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -629,7 +628,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
                       setSelectedNotification(notification);
                       setShowDetail(true);
                     }}
-                    className={`p-4 hover:bg-gray-50 transition-all duration-200 cursor-pointer border-b border-gray-100 relative ${
+                    className={`${isDesktop ? 'p-4' : 'p-3'} hover:bg-gray-50 transition-all duration-200 cursor-pointer border-b border-gray-100 relative ${
                       !notification.is_read ? 'bg-blue-50' : 'bg-white'
                     }`}
                   >
@@ -653,13 +652,13 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
                         <FiX className="w-4 h-4 " />
                       </button>
 
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${getNotificationColor(notification.type)}`}>
+                      <div className={`${isDesktop ? 'w-8 h-8' : 'w-6 h-6'} rounded-full flex items-center justify-center flex-shrink-0 ${getNotificationColor(notification.type)}`}>
                         {getNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         {/* Title Row */}
                         <div className="flex items-center mb-2">
-                          <h4 className={`text-sm font-semibold truncate flex-1 ${
+                          <h4 className={`${isDesktop ? 'text-sm' : 'text-xs'} font-semibold truncate flex-1 ${
                             !notification.is_read ? 'text-gray-900' : 'text-gray-700'
                           }`}>
                             {getNotificationTitle(notification.type, notification.title, notification.created_at)}
@@ -667,7 +666,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
                         </div>
                         
                         {/* Message Row - Show product name and quantity for order-related notifications */}
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                        <p className={`${isDesktop ? 'text-sm' : 'text-xs'} text-gray-600 line-clamp-2 mb-3`}>
                           {(() => {
                             if (['order_placed','order_cancelled','order_rejected','order_accepted'].includes(notification.type)) {
                               const meta: any = notification.metadata ? parseMetadata(notification.metadata) : {};

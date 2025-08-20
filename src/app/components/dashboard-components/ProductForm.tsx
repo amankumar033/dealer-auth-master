@@ -526,7 +526,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col form-transition">
       {/* Header - Sticky */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 sticky top-0 z-10 form-fade-enter">
+      <div className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4 sticky top-0 z-10 form-fade-enter">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -556,12 +556,12 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-6 py-8">
+      <div className="flex-1 px-0 sm:px-6 py-4 sm:py-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 form-scale-enter">
             <form onSubmit={handleSubmit} className="divide-y divide-gray-200">
               {/* Basic Information Section */}
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
@@ -899,7 +899,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Pricing and Stock Section */}
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Pricing & Inventory</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div>
@@ -970,12 +970,12 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Media Section */}
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Images *</h2>
                 
                 {/* Image Upload Area */}
                 <div
-                  className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center transition-colors ${
                     isDragOver 
                       ? 'border-blue-500 bg-blue-50' 
                       : 'border-gray-300 hover:border-gray-400'
@@ -1077,7 +1077,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Settings Section */}
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
                 <div className="flex items-center">
                   <input
@@ -1098,7 +1098,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-gray-200 px-6 py-4">
+      <div className="bg-white border-t border-gray-200 px-4 sm:px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex gap-4">
             <button

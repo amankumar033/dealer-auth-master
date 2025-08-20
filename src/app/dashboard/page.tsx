@@ -15,7 +15,6 @@ import { useToast } from '@/app/components/ui/ToastContainer';
 import LoadingButton from '@/app/components/ui/LoadingButton';
 import WavingDots from '@/app/components/ui/WavingDots';
 import NotificationBell from '@/app/components/ui/NotificationBell';
-import CustomDropdown from '@/app/components/ui/CustomDropdown';
 
 
 
@@ -1082,34 +1081,26 @@ export default function DealerDashboard() {
                       className="block w-full pl-10 pr-3 py-2 text-gray-600 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-                  <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 md:gap-0">
-                    <CustomDropdown
-                      options={[
-                        { value: 'All', label: 'All Types' },
-                        ...availableNotificationTypes.map(t => ({
-                          value: t,
-                          label: t.replace(/_/g, ' ')
-                        }))
-                      ]}
+                  <div className="flex space-x-2">
+                    <select
                       value={typeFilter}
-                      onChange={setTypeFilter}
-                      placeholder="Select type"
-                      maxHeight="max-h-48"
-                      className="text-sm"
-                    />
-                    
-                    <CustomDropdown
-                      options={[
-                        { value: 'All', label: 'All Status' },
-                        { value: 'Unread', label: 'Unread' },
-                        { value: 'Read', label: 'Read' }
-                      ]}
+                      onChange={(e) => setTypeFilter(e.target.value)}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 border border-gray-200"
+                    >
+                      <option value="All">All Types</option>
+                      {availableNotificationTypes.map(t => (
+                        <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>
+                      ))}
+                    </select>
+                    <select
                       value={readFilter}
-                      onChange={(value) => setReadFilter(value as 'All' | 'Unread' | 'Read')}
-                      placeholder="Select status"
-                      maxHeight="max-h-48"
-                      className="text-sm"
-                    />
+                      onChange={(e) => setReadFilter(e.target.value as 'All' | 'Unread' | 'Read')}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 border border-gray-200"
+                    >
+                      <option value="All">All Status</option>
+                      <option value="Unread">Unread</option>
+                      <option value="Read">Read</option>
+                    </select>
                   </div>
                 </div>
               </div>
