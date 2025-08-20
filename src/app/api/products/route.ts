@@ -509,13 +509,12 @@ export async function POST(request: NextRequest) {
       sanitizedData.sub_category_id || null, // Handle optional sub-category
       sanitizedData.brand_name, 
       sanitizedData.sub_brand_name || null, // Handle optional sub-brand
-        sanitizedData.manufacture || null, // Handle optional manufacturer
+      sanitizedData.manufacture || null, // Handle optional manufacturer
       sanitizedData.stock_quantity, 
       sanitizedData.is_active, 
       sanitizedData.is_featured,
-      sanitizedData.is_hot_deal,
-      new Date(), // created_at
-      new Date()  // updated_at
+      sanitizedData.is_hot_deal
+      // Note: created_at and updated_at are handled by NOW() in the database query
     ];
     
     console.log('🔍 Insert parameters count:', insertParams.length);

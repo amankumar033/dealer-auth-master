@@ -698,7 +698,7 @@ export const queries = {
       product_id, dealer_id, name, slug, description, short_description, sale_price, original_price, rating, 
       image_1, image_2, image_3, image_4, category_id, sub_category_id,
       brand_name, sub_brand_name, manufacture, stock_quantity, is_active, is_featured, is_hot_deal, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
   `,
   updateProduct: `
     UPDATE products 

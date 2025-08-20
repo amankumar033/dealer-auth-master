@@ -526,14 +526,14 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col form-transition">
       {/* Header - Sticky */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4 sticky top-0 z-10 form-fade-enter">
+      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 sticky top-0 z-10 form-fade-enter">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <button
                 type="button"
                 onClick={onCancel}
-                className=" text-gray-600 hover:text-gray-900"
+                className="mr-4 text-gray-600 hover:text-gray-900"
               >
                 <FiArrowLeft className="h-6 w-6" />
               </button>
@@ -549,19 +549,19 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               <FiX className="h-6 w-6" />
             </button>
           </div>
-          <p className="text-sm text-gray-600 mt-1 ">
+          <p className="text-sm text-gray-600 mt-1">
             {product ? 'Update product information and settings' : 'Create a new product for your store'}
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-0 sm:px-6 py-4 sm:py-8">
+      <div className="flex-1 px-6 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 form-scale-enter">
             <form onSubmit={handleSubmit} className="divide-y divide-gray-200">
               {/* Basic Information Section */}
-              <div className="p-4 sm:p-6">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
@@ -677,18 +677,19 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                   </div>
 
                   <CustomDropdown
-                    options={manufacturerOptions.map(manufacturer => ({
-                      value: manufacturer,
-                      label: manufacturer
-                    }))}
+                    options={[
+                      { value: '', label: 'Select manufacturer or enter custom name', disabled: true },
+                      ...manufacturerOptions.map(manufacturer => ({
+                        value: manufacturer,
+                        label: manufacturer
+                      }))
+                    ]}
                     value={formData.manufacture}
                     onChange={(value) => setFormData(prev => ({ ...prev, manufacture: value }))}
                     placeholder="Select manufacturer or enter custom name"
                     label="Manufacturer"
-                    searchable={false}
+                    searchable
                     maxHeight="h-50"
-                    allowCustomInput={true}
-                    inputOnly={true}
                   />
 
                   <CustomDropdown
@@ -715,9 +716,8 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     placeholder="Select a category"
                     label="Category"
                     required
-                    searchable={false}
+                    searchable
                     maxHeight="h-50"
-                    allowCustomInput={false}
                   />
 
                   <CustomDropdown
@@ -733,9 +733,8 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     placeholder={formData.category_id ? "Select a sub-category (optional)" : "Select a category first"}
                     label="Sub-Category"
                     disabled={!formData.category_id}
-                    searchable={false}
+                    searchable
                     maxHeight="h-50"
-                    allowCustomInput={false}
                   />
 
                   {product && (
@@ -900,7 +899,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Pricing and Stock Section */}
-              <div className="p-4 sm:p-6">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Pricing & Inventory</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div>
@@ -971,12 +970,12 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Media Section */}
-              <div className="p-4 sm:p-6">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Images *</h2>
                 
                 {/* Image Upload Area */}
                 <div
-                  className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center transition-colors ${
+                  className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     isDragOver 
                       ? 'border-blue-500 bg-blue-50' 
                       : 'border-gray-300 hover:border-gray-400'
@@ -1016,7 +1015,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                         <h3 className="text-sm font-medium text-gray-700">
                           Selected Images ({imagePreviews.length})
                         </h3>
-                        <p className="hidden sm:block text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 mt-1">
                           Click the &quot;Primary&quot; checkbox to set the main product image
                         </p>
                       </div>
@@ -1031,11 +1030,11 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {imagePreviews.map((preview, index) => (
                         <div key={index} className="relative">
-                          <div className={`w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 ${primaryImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}>
+                          <div className={`w-32 h-32 bg-gray-100 rounded-lg overflow-hidden ${primaryImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}>
                             <img
                               src={preview}
                               alt={`Product preview ${index + 1}`}
-                              className="w-full h-full object-cover flex-shrink-0"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                           {/* Primary Image Badge */}
@@ -1047,10 +1046,9 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                           <button
                             type="button"
                             onClick={() => removeImage(index)}
-                            className="absolute -top-0.5 -right-0.5 sm:-top-2 sm:-right-2 bg-red-500 text-white rounded-full p-0.5 sm:p-1 hover:bg-red-600 flex items-center justify-center"
-                            style={{ minWidth: '16px', minHeight: '16px', maxWidth: '20px', maxHeight: '20px' }}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                           >
-                            <FiX className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <FiX className="h-4 w-4" />
                           </button>
                           {/* Primary Image Checkbox */}
                           <div className="absolute -bottom-2 -left-2">
@@ -1066,8 +1064,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                                   });
                                   setPrimaryImageIndex(index);
                                 }}
-                                className="h-1.5 w-1.5 sm:h-2 md:h-3 md:w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded !important"
-                                style={{ minWidth: '17px', minHeight: '17px', maxWidth: '17px', maxHeight: '17px' }}
+                                className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                               />
                               <span className="ml-1 text-xs text-gray-700 font-medium">Primary</span>
                             </label>
@@ -1080,7 +1077,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Settings Section */}
-              <div className="p-4 sm:p-6">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
                 <div className="flex items-center">
                   <input
@@ -1088,8 +1085,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     name="is_active"
                     checked={formData.is_active}
                     onChange={handleChange}
-                    className="h-2 w-2 sm:h-3 md:h-4 md:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded !important"
-                    style={{ minWidth: '17px', minHeight: '17px', maxWidth: '17px', maxHeight: '17px' }}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label className="ml-3 block text-sm text-gray-700">
                     Active - Make this product Available to customers
@@ -1102,7 +1098,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-gray-200 px-4 sm:px-6 py-4">
+      <div className="bg-white border-t border-gray-200 px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex gap-4">
             <button
@@ -1122,17 +1118,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               className="flex-1"
               loadingText="Saving..."
             >
-              {product ? (
-                <>
-                  <span className="sm:hidden">Update</span>
-                  <span className="hidden sm:inline">Update Product</span>
-                </>
-              ) : (
-                <>
-                  <span className="sm:hidden">Create</span>
-                  <span className="hidden sm:inline">Create Product</span>
-                </>
-              )}
+              {product ? 'Update Product' : 'Create Product'}
             </LoadingButton>
           </div>
         </div>
