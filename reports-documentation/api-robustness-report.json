@@ -1,0 +1,136 @@
+{
+  "timestamp": "2025-08-01T03:01:10.589Z",
+  "summary": {
+    "totalPassed": 12,
+    "totalTests": 13,
+    "percentage": "92.3"
+  },
+  "scenarios": [
+    {
+      "scenario": "VARCHAR ID Validation",
+      "tests": [
+        {
+          "test": "Product ID format validation",
+          "passed": true,
+          "message": "Product ID: PRO1 (type: string)",
+          "queryTime": 111,
+          "timestamp": "2025-08-01T03:01:08.509Z"
+        },
+        {
+          "test": "Order ID format validation",
+          "passed": true,
+          "message": "Order ID: ORD1 (type: string)",
+          "queryTime": 114,
+          "timestamp": "2025-08-01T03:01:08.629Z"
+        },
+        {
+          "test": "Category ID format validation",
+          "passed": true,
+          "message": "Category ID: CTR1 (type: string)",
+          "queryTime": 102,
+          "timestamp": "2025-08-01T03:01:08.733Z"
+        }
+      ],
+      "passed": 3,
+      "total": 3
+    },
+    {
+      "scenario": "Undefined Value Handling",
+      "tests": [
+        {
+          "test": "Product update with undefined values",
+          "passed": true,
+          "message": "Query executed with proper null/default values instead of undefined",
+          "queryTime": 129,
+          "timestamp": "2025-08-01T03:01:08.872Z"
+        }
+      ],
+      "passed": 1,
+      "total": 1
+    },
+    {
+      "scenario": "Database Performance",
+      "tests": [
+        {
+          "test": "Connection speed test",
+          "passed": true,
+          "message": "Connection time: 98ms",
+          "queryTime": 98,
+          "timestamp": "2025-08-01T03:01:08.971Z"
+        },
+        {
+          "test": "Query performance test",
+          "passed": true,
+          "message": "Query time: 104ms, Products count: 19",
+          "queryTime": 104,
+          "timestamp": "2025-08-01T03:01:09.076Z"
+        },
+        {
+          "test": "JOIN query performance test",
+          "passed": true,
+          "message": "JOIN query time: 904ms, Results: 10",
+          "queryTime": 904,
+          "timestamp": "2025-08-01T03:01:09.981Z"
+        }
+      ],
+      "passed": 3,
+      "total": 3
+    },
+    {
+      "scenario": "Error Handling",
+      "tests": [
+        {
+          "test": "Invalid ID format handling",
+          "passed": true,
+          "message": "Invalid ID handled gracefully (no results returned)",
+          "queryTime": 121,
+          "timestamp": "2025-08-01T03:01:10.103Z"
+        },
+        {
+          "test": "Non-existent record handling",
+          "passed": true,
+          "message": "Non-existent record handled gracefully (no results returned)",
+          "queryTime": 65,
+          "timestamp": "2025-08-01T03:01:10.168Z"
+        },
+        {
+          "test": "SQL injection prevention test",
+          "passed": true,
+          "message": "SQL injection attempt handled safely",
+          "queryTime": 59,
+          "timestamp": "2025-08-01T03:01:10.228Z"
+        }
+      ],
+      "passed": 3,
+      "total": 3
+    },
+    {
+      "scenario": "Data Integrity",
+      "tests": [
+        {
+          "test": "Required fields validation",
+          "passed": true,
+          "message": "Products with empty names: 0",
+          "queryTime": 124,
+          "timestamp": "2025-08-01T03:01:10.352Z"
+        },
+        {
+          "test": "Price validation",
+          "passed": false,
+          "message": "Products with invalid pricing: 1",
+          "queryTime": 122,
+          "timestamp": "2025-08-01T03:01:10.475Z"
+        },
+        {
+          "test": "Email format validation",
+          "passed": true,
+          "message": "Orders with invalid email format: 0",
+          "queryTime": 111,
+          "timestamp": "2025-08-01T03:01:10.587Z"
+        }
+      ],
+      "passed": 2,
+      "total": 3
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+warning: in the working copy of 'src/app/components/dashboard-components/CategoryManager.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/components/dashboard-components/ProductForm.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/globals.css', LF will be replaced by CRLF the next time Git touches it
+src/app/components/dashboard-components/CategoryManager.tsx
+src/app/components/dashboard-components/ProductForm.tsx
+src/app/globals.css
