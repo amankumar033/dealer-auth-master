@@ -149,22 +149,31 @@ export const categoryApi = {
 
 // Product API functions
 export const productApi = {
-  async getAll(dealerId?: string, categoryId?: string): Promise<Product[]> {
+  async getAll(dealerId?: string, categoryId?: string, page: number = 1, limit: number = 20, includeImages: boolean = true): Promise<{ products: Product[], pagination: any }> {
     try {
       const params = new URLSearchParams();
       if (dealerId) params.append('dealer_id', dealerId);
       if (categoryId) params.append('category_id', categoryId);
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      if (!includeImages) params.append('include_images', 'false');
       
       const response = await fetch(`${API_BASE}/products?${params}`);
       if (!response.ok) {
         console.error('Failed to fetch products:', response.status, response.statusText);
-        return [];
+        return { products: [], pagination: {} };
       }
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      
+      // Handle both old format (array) and new format (object with products and pagination)
+      if (Array.isArray(data)) {
+        return { products: data, pagination: {} };
+      } else {
+        return { products: data.products || [], pagination: data.pagination || {} };
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
-      return [];
+      return { products: [], pagination: {} };
     }
   },
 

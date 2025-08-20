@@ -46,8 +46,14 @@ export default function DealerDashboard() {
   
   const { dealer, logout } = useDealer();
   const { showSuccess, showError } = useToast();
-  const dealerId = dealer?.dealer_id || 'DLR006'; // Use DLR006 which has 25 products
+  const dealerId = dealer?.dealer_id || '';
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
+  // Debug logging
+  console.log('🔍 Dashboard Debug Info:');
+  console.log('  - dealer object:', dealer);
+  console.log('  - dealerId:', dealerId);
+  console.log('  - dealer?.dealer_id:', dealer?.dealer_id);
 
   // Handle category click to show products
   const handleCategoryClick = async (category: Category) => {
@@ -150,8 +156,11 @@ export default function DealerDashboard() {
       }
     };
 
-    if (dealerId) {
+    if (dealerId && dealerId.trim() !== '') {
       fetchOrders();
+    } else {
+      setOrders([]);
+      setOrdersLoading(false);
     }
   }, [dealerId, showError]);
 
@@ -161,7 +170,14 @@ export default function DealerDashboard() {
       const response = await fetch(`/api/orders?dealer_id=${dealerId}`);
       if (response.ok) {
         const data = await response.json();
-        setOrders(Array.isArray(data) ? data : []);
+        // Handle both array format and object format with orders property
+        if (Array.isArray(data)) {
+          setOrders(data);
+        } else if (data && data.orders && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+        } else {
+          setOrders([]);
+        }
       }
     } catch (error) {
       console.error('Error refreshing orders:', error);
@@ -172,33 +188,62 @@ export default function DealerDashboard() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        console.log('🔄 Fetching products for dealerId:', dealerId);
         setProductsLoading(true);
-        const response = await fetch(`/api/products?dealer_id=${dealerId}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch(`/api/products?dealer_id=${dealerId}`, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('📡 Products API response status:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
-          // Ensure data is an array
-          setProducts(Array.isArray(data) ? data : []);
+          console.log('📦 Products API response data:', data);
+          
+          // Handle both array format and object format with products property
+          if (Array.isArray(data)) {
+            console.log('✅ Products data is array, count:', data.length);
+            setProducts(data);
+          } else if (data && data.products && Array.isArray(data.products)) {
+            console.log('✅ Products data has products property, count:', data.products.length);
+            setProducts(data.products);
+          } else {
+            console.log('⚠️ Products data format not recognized, setting empty array');
+            setProducts([]);
+          }
         } else {
-          console.error('Failed to fetch products:', response.status);
+          console.error('❌ Failed to fetch products:', response.status);
           setProducts([]);
           showError('Failed to load products', 'Please refresh the page to try again.');
         }
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('❌ Error fetching products:', error);
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.error('⏰ Products API request timed out');
+          showError('Products request timed out', 'Please try again or check your connection.');
+        } else {
+          showError('Failed to load products', 'Please check your connection and try again.');
+        }
         setProducts([]);
-        showError('Failed to load products', 'Please check your connection and try again.');
       } finally {
         setProductsLoading(false);
       }
     };
 
-    if (dealerId) {
+    if (dealerId && dealerId.trim() !== '') {
       fetchProducts();
+    } else {
+      setProducts([]);
+      setProductsLoading(false);
     }
 
     // Add event listener for product updates
     const handleProductsUpdate = () => {
-      if (dealerId) {
+      if (dealerId && dealerId.trim() !== '') {
         fetchProducts();
       }
     };
@@ -263,8 +308,11 @@ export default function DealerDashboard() {
 
   // Initial notifications load
   useEffect(() => {
-    if (dealerId) {
+    if (dealerId && dealerId.trim() !== '') {
       fetchNotificationsData();
+    } else {
+      setNotifications([]);
+      setNotificationsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dealerId]);
@@ -690,7 +738,7 @@ export default function DealerDashboard() {
                 loading={isLoggingOut}
                 variant="secondary"
                 size="sm"
-                className="flex items-center px-1.5 py-1.5 sm:px-2 sm:py-2 lg:px-3 lg:py-2 text-xs sm:text-sm font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-300 hover:scale-105 hover:shadow-md"
+                className="flex items-center px-1.5 py-1.5 sm:px-2 sm:py-2 lg:px-3 lg:py-2 text-xs sm:text-sm font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-300 hover:scale-105 hover:shadow-md ml-3 sm:ml-0"
                 loadingText="Logging out..."
               >
                 <FiLogOut className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5 sm:mr-1" />
@@ -704,7 +752,16 @@ export default function DealerDashboard() {
 
         {/* Dashboard Content */}
         <main className="p-4 lg:p-6">
-          {activeTab === 'dashboard' && (
+          {!dealerId && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <FiUser className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Dealer Logged In</h3>
+              <p className="text-gray-500">Please log in to view your dashboard</p>
+            </div>
+          )}
+          {activeTab === 'dashboard' && dealerId && (
             <div className="space-y-4 lg:space-y-6">
               {/* Stats Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">

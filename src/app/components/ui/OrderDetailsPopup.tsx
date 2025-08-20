@@ -154,7 +154,7 @@ export default function OrderDetailsPopup({
 
 
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -179,7 +179,7 @@ export default function OrderDetailsPopup({
         </div>
         
         {/* Main Content */}
-        <div className="flex-1 px-6 py-8">
+        <div className="flex-1 px-3 sm:px-6 py-8">
           {/* Product Details Section */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-blue-200 rounded-t-lg">
             <div className="flex items-center justify-between">
@@ -366,10 +366,10 @@ export default function OrderDetailsPopup({
             <div className="text-xs lg:text-sm text-gray-600 text-center lg:text-left">
               Order ID: {order.order_id} • Last updated: {formatDate(order.order_date)}
             </div>
-            <div className="flex justify-center lg:justify-end space-x-2 lg:space-x-3">
+            <div className="grid grid-cols-2 lg:flex lg:justify-end gap-2 lg:gap-3">
               <button
                 onClick={onClose}
-                className="px-2 py-1 lg:px-4 lg:py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-xs lg:text-sm"
+                className="px-2 py-1 lg:px-4 lg:py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-xs lg:text-sm flex items-center justify-center"
               >
                 Close
               </button>
@@ -379,7 +379,7 @@ export default function OrderDetailsPopup({
                 <button
                   onClick={handleDeleteOrder}
                   disabled={deleting}
-                  className="px-2 py-1 lg:px-4 lg:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
+                  className="px-2 py-1 lg:px-4 lg:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                 >
                   {deleting ? (
                     <>
@@ -400,7 +400,7 @@ export default function OrderDetailsPopup({
                 <button
                   onClick={handleUpdateStatus}
                   disabled={updating}
-                  className="px-2 py-1 lg:px-4 lg:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
+                  className="px-2 py-1 lg:px-4 lg:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                 >
                   {updating ? (
                     <>
@@ -417,7 +417,7 @@ export default function OrderDetailsPopup({
               )}
               
               {isOrderCompleted && (
-                <div className="px-2 py-1 lg:px-4 lg:py-2 bg-green-100 text-green-800 rounded-lg flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm">
+                <div className="px-2 py-1 lg:px-4 lg:py-2 bg-green-100 text-green-800 rounded-lg flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm">
                   <FiCheckCircle className="w-3 h-3 lg:w-4 lg:h-4" />
                   <span>Order Delivered</span>
                 </div>

@@ -82,8 +82,11 @@ export default function OrderStatusManager({
     <div className="space-y-4">
       {/* Current Status Display */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <span className="text-sm font-medium text-gray-700">Current Status:</span>
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <span className="text-sm font-medium text-gray-700">
+            <span className="sm:hidden">Status:</span>
+            <span className="hidden sm:inline">Current Status:</span>
+          </span>
           {currentStatus && (
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${currentStatus.color}`}>
               {currentStatus.label}
@@ -104,14 +107,14 @@ export default function OrderStatusManager({
 
       {/* Accept/Reject Buttons for Pending Orders */}
       {canAcceptReject && (
-        <div className="flex space-x-3">
+        <div className="grid grid-cols-2 gap-3">
           <LoadingButton
             onClick={handleAcceptOrder}
             loading={isAccepting}
             disabled={isRejecting}
             variant="success"
             size="sm"
-            className="flex items-center space-x-2"
+            className="flex items-center justify-center space-x-2"
           >
             <FiCheck className="h-4 w-4" />
             <span>Accept Order</span>
@@ -123,7 +126,7 @@ export default function OrderStatusManager({
             disabled={isAccepting}
             variant="danger"
             size="sm"
-            className="flex items-center space-x-2"
+            className="flex items-center justify-center space-x-2"
           >
             <FiX className="h-4 w-4" />
             <span>Reject Order</span>
@@ -151,16 +154,19 @@ export default function OrderStatusManager({
             </select>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="grid grid-cols-2 gap-3">
             <LoadingButton
               onClick={handleStatusUpdate}
               loading={isUpdating}
               variant="primary"
               size="sm"
-              className="flex items-center space-x-2"
+              className="flex items-center justify-center space-x-2"
             >
               <FiMail className="h-4 w-4" />
-              <span>Update & Notify</span>
+              <span>
+                <span className="sm:hidden">Update</span>
+                <span className="hidden sm:inline">Update & Notify</span>
+              </span>
             </LoadingButton>
             
             <button
@@ -169,7 +175,7 @@ export default function OrderStatusManager({
                 setSelectedStatus(order.order_status);
               }}
               disabled={isUpdating}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 flex items-center justify-center"
             >
               Cancel
             </button>

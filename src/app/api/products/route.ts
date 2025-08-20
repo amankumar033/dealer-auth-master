@@ -41,6 +41,10 @@ export async function GET(request: NextRequest) {
     const dealerId = searchParams.get('dealer_id');
     const categoryId = searchParams.get('category_id');
     const showAll = searchParams.get('show_all') === 'true';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const offset = (page - 1) * limit;
+    const includeImages = searchParams.get('include_images') !== 'false'; // Default to true for backward compatibility
     
     console.log('🔍 Debug: Products API GET request');
     console.log('  - dealerId:', dealerId);
@@ -70,6 +74,9 @@ export async function GET(request: NextRequest) {
       console.log('  - Error: dealer_id is required when not using show_all');
       return NextResponse.json({ error: 'dealer_id is required when not using show_all' }, { status: 400 });
     }
+
+    // Add pagination to the query
+    query += ` LIMIT ${limit} OFFSET ${offset}`;
 
     console.log('  - Final query:', query);
     console.log('  - Final params:', params);
@@ -114,10 +121,8 @@ export async function GET(request: NextRequest) {
         }
         
         if (Buffer.isBuffer(value)) {
-          console.log(`Converting Buffer field '${key}' to string`);
           product[key] = value.toString('utf8');
         } else if (typeof value === 'object' && value && value.type === 'Buffer') {
-          console.log(`Converting Buffer object field '${key}' to string`);
           try {
             const buffer = Buffer.from(value.data);
             product[key] = buffer.toString('utf8');
@@ -128,13 +133,19 @@ export async function GET(request: NextRequest) {
         }
       });
       
+      // Skip image processing if not needed
+      if (!includeImages) {
+        product.image_1 = '';
+        product.images = [];
+        product.image = '';
+        return product as ProductProcessed;
+      }
+      
       // Use image_1 as the primary image since there's no 'image' column
       if (product.image_1) {
         // Handle raw Buffer (from MySQL BLOB field)
         if (Buffer.isBuffer(product.image_1)) {
           try {
-            console.log('Converting raw Buffer to base64...');
-            
             // It's actual image data, convert to base64
             const base64 = product.image_1.toString('base64');
             
@@ -151,7 +162,6 @@ export async function GET(request: NextRequest) {
             }
             
             product.image_1 = `data:${mimeType};base64,${base64}`;
-            console.log('Successfully converted raw Buffer to base64, length:', base64.length, 'MIME type:', mimeType);
           } catch (error) {
             console.error('Error converting raw Buffer to base64:', error);
             product.image_1 = '';
@@ -160,14 +170,12 @@ export async function GET(request: NextRequest) {
         // Handle Buffer object (BLOB data)
         else if (typeof product.image_1 === 'object' && product.image_1.type === 'Buffer') {
           try {
-            console.log('Converting Buffer object to base64...');
             const buffer = Buffer.from(product.image_1.data);
             
             // It's actual image data, convert to base64
             const base64 = buffer.toString('base64');
             const mimeType = 'image/jpeg'; // Default to JPEG
             product.image_1 = `data:${mimeType};base64,${base64}`;
-            console.log('Successfully converted Buffer object to base64, length:', base64.length);
           } catch (error) {
             console.error('Error converting Buffer object to base64:', error);
             product.image_1 = '';
@@ -175,17 +183,13 @@ export async function GET(request: NextRequest) {
         }
         // Handle string (already converted or URL)
         else if (typeof product.image_1 === 'string') {
-          console.log('Image is already a string, length:', product.image_1.length);
-          
           // Check if it's a JSON string that was incorrectly converted
           if (product.image_1.startsWith('[') && product.image_1.endsWith(']')) {
             try {
-              console.log('Found JSON string, attempting to parse...');
               const imagesArray = JSON.parse(product.image_1);
               if (Array.isArray(imagesArray) && imagesArray.length > 0) {
                 // Take the first image as the primary image
                 product.image_1 = imagesArray[0];
-                console.log('Successfully extracted first image from JSON array');
               }
             } catch (error) {
               console.error('Error parsing JSON string:', error);
@@ -195,11 +199,9 @@ export async function GET(request: NextRequest) {
         }
         // Handle other types
         else {
-          console.log('Unknown image data type:', typeof product.image_1);
           product.image_1 = '';
         }
       } else {
-        console.log('No image data found in product');
         product.image_1 = '';
       }
       
@@ -258,7 +260,6 @@ export async function GET(request: NextRequest) {
       }
       
       product.images = allImages.filter(img => img && img !== ''); // Remove empty images
-      console.log(`Found ${product.images.length} images for product ${product.product_id}`);
       
       // Add image field for backward compatibility (use image_1 as primary)
       product.image = product.image_1 || '';
@@ -266,7 +267,42 @@ export async function GET(request: NextRequest) {
       return product as ProductProcessed;
     }));
     
-    return NextResponse.json(processedProducts);
+    // Get total count for pagination
+    let totalCount = 0;
+    try {
+      let countQuery = 'SELECT COUNT(*) as total FROM products';
+      let countParams: any[] = [];
+      
+      if (categoryId) {
+        if (showAll) {
+          countQuery += ' WHERE category_id = ?';
+          countParams = [categoryId];
+        } else {
+          countQuery += ' WHERE dealer_id = ? AND category_id = ?';
+          countParams = [dealerId, categoryId];
+        }
+      } else if (!showAll) {
+        countQuery += ' WHERE dealer_id = ?';
+        countParams = [dealerId];
+      }
+      
+      const countResult = await executeQuery(countQuery, countParams, 2, false) as any[];
+      totalCount = countResult[0]?.total || 0;
+    } catch (error) {
+      console.error('Error getting total count:', error);
+    }
+    
+    return NextResponse.json({
+      products: processedProducts,
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNext: page * limit < totalCount,
+        hasPrev: page > 1
+      }
+    });
   } catch (error) {
     console.error('Database error:', error);
     const errorResponse = formatErrorResponse(error, 'Products GET API');

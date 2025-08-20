@@ -167,7 +167,7 @@ export default function CategoryManager({ dealerId = '1', onCategoryClick }: Cat
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4 lg:p-6 transition-all duration-300 hover:shadow-xl">
+    <div className="w-full bg-white rounded-xl shadow-lg p-4 lg:p-6 transition-all duration-300 hover:shadow-xl">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 lg:mb-6 space-y-4 lg:space-y-0">
         <h2 className="text-xl lg:text-2xl font-bold text-black bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Category Management</h2>
@@ -176,27 +176,26 @@ export default function CategoryManager({ dealerId = '1', onCategoryClick }: Cat
           <div className="flex bg-gray-100 rounded-xl p-1 shadow-inner">
             <button
               onClick={() => setViewMode('all')}
-              className={`flex items-center px-3 py-2 rounded-lg text-sm font-bold transition-all duration-300 ease-out transform hover:scale-105 ${
+              className={`flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300 ease-out transform hover:scale-105 flex-1 ${
                 viewMode === 'all' 
                   ? 'bg-white text-blue-600 shadow-lg scale-105' 
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
               }`}
             >
               <FiGrid className="mr-2 transition-transform duration-300" />
-              <span className="hidden sm:inline">All Categories</span>
-              <span className="sm:hidden">All</span>
+              <span className="">All Categories</span>
             </button>
             <button
               onClick={() => setViewMode('my')}
-              className={`flex items-center px-3 py-2 rounded-lg text-sm font-bold transition-all duration-300 ease-out transform hover:scale-105 ${
+              className={`flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300 ease-out transform hover:scale-105 flex-1 whitespace-nowrap ${
                 viewMode === 'my' 
                   ? 'bg-white text-blue-600 shadow-lg scale-105' 
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
               }`}
             >
-              <FiUser className="mr-2 transition-transform duration-300" />
+              <FiUser className="mr-1 transition-transform duration-300" />
               <span className="hidden sm:inline">My Product Categories</span>
-              <span className="sm:hidden">My</span>
+              <span className="sm:hidden">My Product</span>
             </button>
           </div>
           
@@ -273,22 +272,22 @@ export default function CategoryManager({ dealerId = '1', onCategoryClick }: Cat
       )}
 
       {/* Categories Table */}
-      <div className="overflow-x-auto rounded-xl shadow-lg">
-        <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '800px' }}>
+      <div className="w-full overflow-x-auto rounded-xl shadow-lg">
+        <table className="w-full divide-y divide-gray-200">
           <thead className="bg-gradient-to-r from-gray-50 to-blue-50">
             <tr>
-              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
+              <th className="w-1/4 px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
                 Category Name
               </th>
-              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
+              <th className="w-1/2 px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
                 Description
               </th>
               {viewMode === 'my' && (
-                <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
+                <th className="w-1/6 px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
                   Total Products
                 </th>
               )}
-              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
+              <th className="w-1/6 px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
                 Status
               </th>
             </tr>

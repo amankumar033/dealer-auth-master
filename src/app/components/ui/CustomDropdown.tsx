@@ -21,6 +21,8 @@ interface CustomDropdownProps {
   maxHeight?: string;
   searchable?: boolean;
   onSearchChange?: (searchTerm: string) => void;
+  allowCustomInput?: boolean;
+  inputOnly?: boolean;
 }
 
 export default function CustomDropdown({
@@ -34,10 +36,13 @@ export default function CustomDropdown({
   className = "",
   maxHeight = "max-h-60",
   searchable = false,
-  onSearchChange
+  onSearchChange,
+  allowCustomInput = false,
+  inputOnly = false
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [customValue, setCustomValue] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Filter options based on search term
@@ -69,6 +74,14 @@ export default function CustomDropdown({
     onChange(optionValue);
     setIsOpen(false);
     setSearchTerm('');
+    setCustomValue('');
+  };
+
+  // Handle custom input change
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setCustomValue(newValue);
+    onChange(newValue); // Update the parent component with the custom value
   };
 
   // Handle search input change
@@ -89,32 +102,96 @@ export default function CustomDropdown({
       )}
       
       <div className="relative">
-        <button
-          type="button"
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-          disabled={disabled}
-          className={`
-            w-full px-3 py-2 text-left border border-gray-300 rounded-md 
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-            transition-all duration-200 text-sm md:text-base
-            ${disabled 
-              ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
-              : 'bg-white text-gray-900 hover:bg-gray-50 cursor-pointer'
-            }
-            ${isOpen ? 'ring-2 ring-blue-500 border-blue-500' : ''}
-          `}
-        >
-          <span className={selectedOption ? 'text-gray-900' : 'text-gray-500'}>
-            {selectedOption ? selectedOption.label : placeholder}
-          </span>
-          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            {isOpen ? (
-              <FiChevronUp className="w-4 h-4 text-gray-400" />
-            ) : (
-              <FiChevronDown className="w-4 h-4 text-gray-400" />
-            )}
-          </span>
-        </button>
+        {allowCustomInput ? (
+          inputOnly ? (
+            <input
+              type="text"
+              value={selectedOption ? selectedOption.label : customValue}
+              onChange={handleCustomInputChange}
+              onFocus={() => !disabled && setIsOpen(true)}
+              placeholder={placeholder}
+              disabled={disabled}
+              className={`
+                w-full px-3 py-2 border border-gray-300 rounded-md 
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                transition-all duration-200 text-sm md:text-base
+                ${disabled 
+                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                  : 'bg-white text-gray-900'
+                }
+                ${selectedOption ? 'text-gray-900' : 'text-gray-600'}
+              `}
+            />
+          ) : (
+            <div className="flex">
+              <input
+                type="text"
+                value={selectedOption ? selectedOption.label : customValue}
+                onChange={handleCustomInputChange}
+                placeholder={placeholder}
+                disabled={disabled}
+                className={`
+                  flex-1 px-3 py-2 border border-gray-300 rounded-l-md 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                  transition-all duration-200 text-sm md:text-base
+                  ${disabled 
+                    ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                    : 'bg-white text-gray-900'
+                  }
+                  ${selectedOption ? 'text-gray-900' : 'text-gray-600'}
+                `}
+              />
+              <button
+                type="button"
+                onClick={() => !disabled && setIsOpen(!isOpen)}
+                disabled={disabled}
+                className={`
+                  px-3 py-2 border border-l-0 border-gray-300 rounded-r-md 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                  transition-all duration-200
+                  ${disabled 
+                    ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                    : 'bg-white text-gray-900 hover:bg-gray-50 cursor-pointer'
+                  }
+                  ${isOpen ? 'ring-2 ring-blue-500 border-blue-500' : ''}
+                `}
+              >
+                {isOpen ? (
+                  <FiChevronUp className="w-4 h-4 text-gray-400" />
+                ) : (
+                  <FiChevronDown className="w-4 h-4 text-gray-400" />
+                )}
+              </button>
+            </div>
+          )
+        ) : (
+          <button
+            type="button"
+            onClick={() => !disabled && setIsOpen(!isOpen)}
+            disabled={disabled}
+            className={`
+              w-full px-3 py-2 text-left border border-gray-300 rounded-md 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+              transition-all duration-200 text-sm md:text-base
+              ${disabled 
+                ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                : 'bg-white text-gray-900 hover:bg-gray-50 cursor-pointer'
+              }
+              ${isOpen ? 'ring-2 ring-blue-500 border-blue-500' : ''}
+            `}
+          >
+            <span className={selectedOption ? 'text-gray-900' : 'text-gray-600'}>
+              {selectedOption ? selectedOption.label : placeholder}
+            </span>
+            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              {isOpen ? (
+                <FiChevronUp className="w-4 h-4 text-gray-400" />
+              ) : (
+                <FiChevronDown className="w-4 h-4 text-gray-400" />
+              )}
+            </span>
+          </button>
+        )}
 
                  {/* Dropdown Menu */}
          {isOpen && !disabled && (

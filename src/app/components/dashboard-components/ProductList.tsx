@@ -42,35 +42,77 @@ export default function ProductList({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductDetail, setShowProductDetail] = useState(false);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<any>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   const { showSuccess, showError } = useToast();
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (page: number = 1, append: boolean = false) => {
     try {
-      setLoading(true);
-      console.log('ProductList: Loading data for dealerId:', dealerId);
+      if (page === 1) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+      
+      console.log('ProductList: Loading data for dealerId:', dealerId, 'page:', page);
       
       let data;
       if (categoryProducts && categoryProducts.length > 0) {
         console.log('ProductList: Using category products:', categoryProducts.length);
-        data = categoryProducts;
+        data = { products: categoryProducts, pagination: {} };
       } else {
         console.log('ProductList: Fetching all products');
-        data = await productApi.getAll(dealerId);
+        data = await productApi.getAll(dealerId, undefined, page, 20, true);
       }
       
       console.log('ProductList: Received data:', data);
-      setProducts(Array.isArray(data) ? data : []);
+      
+      if (append) {
+        setProducts(prev => [...prev, ...data.products]);
+      } else {
+        setProducts(data.products);
+      }
+      
+      setPagination(data.pagination);
+      setCurrentPage(page);
     } catch (error) {
       console.error('ProductList: Error loading data:', error);
-      setProducts([]);
+      if (!append) {
+        setProducts([]);
+      }
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   }, [dealerId, categoryProducts]);
 
   useEffect(() => {
-    loadData();
+    loadData(1, false);
   }, [loadData]);
+
+  // Load categories for category name display
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        console.log('ProductList: Loading categories for category names');
+        const categoriesData = await categoryApi.getAllCategories();
+        console.log('ProductList: Loaded categories:', categoriesData);
+        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+      } catch (error) {
+        console.error('ProductList: Error loading categories:', error);
+        setCategories([]);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  const loadMore = () => {
+    if (pagination.hasNext && !loadingMore) {
+      loadData(currentPage + 1, true);
+    }
+  };
 
   // Function to safely convert any value to string for rendering
   const safeRender = (value: any): string => {
@@ -548,11 +590,31 @@ export default function ProductList({
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
-                            <div className="text-lg font-bold text-black mb-2">No products found</div>
-                <div className="text-gray-700">Try adjusting your search or filters</div>
+            <div className="text-lg font-bold text-black mb-2">No products found</div>
+            <div className="text-gray-700">Try adjusting your search or filters</div>
           </div>
         )}
       </div>
+
+      {/* Load More Button */}
+      {pagination.hasNext && !categoryProducts && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={loadMore}
+            disabled={loadingMore}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            {loadingMore ? (
+              <div className="flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Loading...
+              </div>
+            ) : (
+              `Load More (${pagination.total - products.length} remaining)`
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Product Detail Modal */}
       <ProductDetail
