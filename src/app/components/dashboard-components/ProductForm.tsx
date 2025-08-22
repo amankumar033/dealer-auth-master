@@ -5,7 +5,7 @@ import { Product, Category, SubCategory, Brand, SubBrand, CreateProductRequest, 
 import { categoryApi, subCategoryApi, brandApi, subBrandApi } from '@/lib/api';
 import { roundRating, validatePricing } from '@/lib/utils';
 import dynamic from 'next/dynamic';
-import { FiUpload, FiX, FiImage, FiArrowLeft } from 'react-icons/fi';
+import { FiUpload, FiX, FiImage, FiArrowLeft, FiTrash2 } from 'react-icons/fi';
 import LoadingButton from '../ui/LoadingButton';
 import CustomDropdown from '../ui/CustomDropdown';
 
@@ -524,9 +524,26 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col form-transition">
+    <>
+      <style jsx>{`
+        .custom-checkbox {
+          width: 15px !important;
+          height: 15px !important;
+          min-width: 15px !important;
+          min-height: 15px !important;
+          max-width: 15px !important;
+          max-height: 15px !important;
+          transform: none !important;
+        }
+        
+        .remove-image-btn {
+          min-height: auto !important;
+          min-width: auto !important;
+        }
+      `}</style>
+      <div className="min-h-screen bg-gray-50 flex flex-col form-transition">
       {/* Header - Sticky */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 sticky top-0 z-10 form-fade-enter">
+      <div className="bg-white shadow-sm border-b border-gray-200 px-4 lg:px-6 py-4 sticky top-0 z-10 form-fade-enter">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -549,16 +566,16 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               <FiX className="h-6 w-6" />
             </button>
           </div>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 mt-1 pl-[39px]">
             {product ? 'Update product information and settings' : 'Create a new product for your store'}
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-6 py-8">
+      <div className="flex-1 py-0 lg:p-6">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 form-scale-enter">
+          <div className="bg-white lg:rounded-lg shadow-sm border border-gray-200 form-scale-enter">
             <form onSubmit={handleSubmit} className="divide-y divide-gray-200">
               {/* Basic Information Section */}
               <div className="p-6">
@@ -676,21 +693,50 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     </div>
                   </div>
 
-                  <CustomDropdown
-                    options={[
-                      { value: '', label: 'Select manufacturer or enter custom name', disabled: true },
-                      ...manufacturerOptions.map(manufacturer => ({
-                        value: manufacturer,
-                        label: manufacturer
-                      }))
-                    ]}
-                    value={formData.manufacture}
-                    onChange={(value) => setFormData(prev => ({ ...prev, manufacture: value }))}
-                    placeholder="Select manufacturer or enter custom name"
-                    label="Manufacturer"
-                    searchable
-                    maxHeight="h-50"
-                  />
+                  <div className="relative manufacturer-dropdown-container">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Manufacturer *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="manufacture"
+                        value={formData.manufacture}
+                        onChange={(e) => {
+                          setFormData(prev => ({ ...prev, manufacture: e.target.value }));
+                          setShowManufacturerDropdown(true);
+                        }}
+                        onFocus={() => setShowManufacturerDropdown(true)}
+                        className="w-full text-gray-600 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:shadow-md hover:border-blue-300"
+                        placeholder="Select manufacturer or enter custom name"
+                        required
+                      />
+                      
+                      {/* Dropdown for predefined manufacturers */}
+                      {showManufacturerDropdown && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                          {filteredManufacturers.length > 0 ? (
+                            filteredManufacturers.map((manufacturer, index) => (
+                              <div
+                                key={index}
+                                className="px-3 py-2 hover:bg-gray-100 text-gray-600 cursor-pointer text-sm"
+                                onClick={() => {
+                                  setFormData(prev => ({ ...prev, manufacture: manufacturer }));
+                                  setShowManufacturerDropdown(false);
+                                }}
+                              >
+                                {manufacturer}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="px-3 py-2 text-gray-500 text-sm">
+                              No matching manufacturers
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                   <CustomDropdown
                     options={[
@@ -716,7 +762,6 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     placeholder="Select a category"
                     label="Category"
                     required
-                    searchable
                     maxHeight="h-50"
                   />
 
@@ -733,7 +778,6 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     placeholder={formData.category_id ? "Select a sub-category (optional)" : "Select a category first"}
                     label="Sub-Category"
                     disabled={!formData.category_id}
-                    searchable
                     maxHeight="h-50"
                   />
 
@@ -899,7 +943,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Pricing and Stock Section */}
-              <div className="p-6">
+              <div className="py-4 px-4 lg:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Pricing & Inventory</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div>
@@ -970,7 +1014,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Media Section */}
-              <div className="p-6">
+              <div className="py-4 px-4  lg:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Images *</h2>
                 
                 {/* Image Upload Area */}
@@ -1009,20 +1053,20 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
 
                 {/* Image Previews */}
                 {(imagePreviews.length > 0 || selectedImages.length > 0) && (
-                  <div className="mt-6">
-                    <div className="flex justify-between items-center mb-3">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-700">
+                  <div className="mt-6 mb-4 ">
+                    <div className="flex justify-between items-center mb-3 ">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-700 truncate">
                           Selected Images ({imagePreviews.length})
                         </h3>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 mt-1 hidden sm:block">
                           Click the &quot;Primary&quot; checkbox to set the main product image
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={removeAllImages}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        className="text-red-600 hover:text-red-800 text-xs lg:text-sm font-medium whitespace-nowrap px-1"
                       >
                         Remove All
                       </button>
@@ -1030,28 +1074,28 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {imagePreviews.map((preview, index) => (
                         <div key={index} className="relative">
-                          <div className={`w-32 h-32 bg-gray-100 rounded-lg overflow-hidden ${primaryImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}>
+                          <div className={`w-32 mt-4 h-32 bg-gray-100 rounded-lg overflow-visible relative ${primaryImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}>
                             <img
                               src={preview}
                               alt={`Product preview ${index + 1}`}
                               className="w-full h-full object-cover"
                             />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute top-0 -right-2 bg-red-500 text-white rounded-lg p-1 hover:bg-red-600 w-5 h-5 remove-image-btn flex items-center justify-center shadow-md"
+                            >
+                              <FiTrash2 className="h-3 w-3" />
+                            </button>
                           </div>
                           {/* Primary Image Badge */}
                           {primaryImageIndex === index && (
-                            <div className="absolute -top-2 -left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                            <div className="absolute -top-2 mt-4 -left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
                               Primary
                             </div>
                           )}
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                          >
-                            <FiX className="h-4 w-4" />
-                          </button>
                           {/* Primary Image Checkbox */}
-                          <div className="absolute -bottom-2 -left-2">
+                          <div className="absolute  -left-1 ">
                             <label className="flex items-center bg-white rounded-full px-2 py-1 shadow-md cursor-pointer">
                               <input
                                 type="checkbox"
@@ -1064,9 +1108,9 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                                   });
                                   setPrimaryImageIndex(index);
                                 }}
-                                className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                className="custom-checkbox text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-1"
                               />
-                              <span className="ml-1 text-xs text-gray-700 font-medium">Primary</span>
+                              <span className="text-xs text-gray-700">Image {index + 1}</span>
                             </label>
                           </div>
                         </div>
@@ -1077,7 +1121,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               </div>
 
               {/* Settings Section */}
-              <div className="p-6">
+              <div className="py-4 px-4 lg:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
                 <div className="flex items-center">
                   <input
@@ -1085,11 +1129,11 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
                     name="is_active"
                     checked={formData.is_active}
                     onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="custom-checkbox text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label className="ml-3 block text-sm text-gray-700">
-                    Active - Make this product Available to customers
-                  </label>
+                                      <label className="ml-3 block text-sm text-gray-700">
+                      Active - Make this product purchasable
+                    </label>
                 </div>
               </div>
             </form>
@@ -1098,13 +1142,13 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-gray-200 px-6 py-4">
+      <div className="bg-white border-t border-gray-200 px-4 lg:px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex gap-4">
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 px-6 py-3 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              className="flex-1 px-6 py-3 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-xs lg:text-base"
             >
               Cancel
             </button>
@@ -1115,7 +1159,7 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
               disabled={!validatePricing(formData.sale_price, formData.original_price) || (selectedImages.length === 0 && imagePreviews.length === 0)}
               variant="primary"
               size="lg"
-              className="flex-1"
+              className="flex-1 text-xs lg:text-base"
               loadingText="Saving..."
             >
               {product ? 'Update Product' : 'Create Product'}
@@ -1124,5 +1168,6 @@ export default function ProductForm({ product, dealerId, onSubmit, onCancel, isL
         </div>
       </div>
     </div>
+    </>
   );
 } 

@@ -167,7 +167,7 @@ export default function CategoryManager({ dealerId = '1', onCategoryClick }: Cat
   }
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-lg p-4 lg:p-6 transition-all duration-300 hover:shadow-xl">
+            <div className="w-full bg-white lg:rounded-xl shadow-lg p-4 lg:p-6 transition-all duration-300 hover:shadow-xl">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 lg:mb-6 space-y-4 lg:space-y-0">
         <h2 className="text-xl lg:text-2xl font-bold text-black bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Category Management</h2>

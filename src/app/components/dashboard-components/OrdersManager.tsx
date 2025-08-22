@@ -439,18 +439,20 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
   return (
     <div className="space-y-6 form-transition">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
+      <div className="space-y-4">
         <h2 className="text-xl lg:text-2xl font-bold text-gray-900 bg-gradient-to-r from-gray-800 to-blue-600 bg-clip-text text-transparent">Orders Management</h2>
+        
+        {/* Search, Filter, and Export Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative flex-1">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search orders..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:shadow-md focus:shadow-lg"
+              className="w-full pl-9 pr-3 text-gray-600 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 hover:shadow-md focus:shadow-lg"
             />
           </div>
           
@@ -461,12 +463,22 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
             <FiFilter className="mr-2 transition-transform duration-300" />
             <span className="text-gray-500">Filters</span>
           </button>
+
+          {filteredOrders.length > 0 && (
+            <button
+              onClick={exportToCSV}
+              className="flex items-center justify-center px-2 lg:px-4 h-4 lg:h-auto lg:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-xs lg:text-sm font-medium"
+            >
+              <FiDownload className="mr-1 lg:mr-2 w-3 h-3 lg:w-4 lg:h-4" />
+              Export CSV
+            </button>
+          )}
         </div>
       </div>
 
       {/* Enhanced Filters */}
       {showFilters && (
-        <div className="mb-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl shadow-lg transition-all duration-500 ease-out transform hover:scale-[1.01]">
+        <div className="mb-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl shadow-lg transition-all duration-500 ease-out transform hover:scale-[1.01]">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
             <CustomDropdown
               options={[
@@ -529,14 +541,6 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
             </span>
           )}
         </div>
-        {filteredOrders.length > 0 && (
-          <button
-            onClick={exportToCSV}
-            className="hidden sm:block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium self-center sm:self-auto"
-          >
-            Export CSV
-          </button>
-        )}
       </div>
 
       {/* Orders List */}
@@ -553,13 +557,13 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
                   <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Order ID
                   </th>
-                  <th className="hidden md:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                  <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Product
                   </th>
-                  <th className="hidden lg:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                  <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Qty
                   </th>
-                  <th className="hidden md:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                  <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Customer
                   </th>
                   <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
@@ -568,10 +572,10 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
                   <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="hidden sm:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                  <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="hidden lg:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                  <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Payment
                   </th>
                   <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
@@ -585,24 +589,24 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
                     <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 transition-colors duration-300">
                       #{order.order_id}
                     </td>
-                    <td className="hidden md:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 lg:px-6 py-4">
                       <div className="flex items-center space-x-3">
                         {order.product_image && (
                           <img 
                             src={getImageSrc(order.product_image) || ''} 
                             alt={order.product_name || 'Product'} 
-                            className="w-10 h-10 rounded-lg object-cover border border-gray-200"
+                            className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
                           />
                         )}
-                        <div>
-                          <div className="text-sm font-medium text-gray-900 transition-colors duration-300">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-gray-900 transition-colors duration-300 truncate">
                             {safeRender(order.product_name || 'Product')}
                           </div>
                           {order.brand_name && (
-                            <div className="text-xs text-gray-500 transition-colors duration-300">
+                            <div className="text-xs text-gray-500 transition-colors duration-300 truncate">
                               {safeRender(order.brand_name)}
                               {order.sub_brand_name && ` - ${safeRender(order.sub_brand_name)}`}
                             </div>
@@ -610,12 +614,12 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
                         </div>
                       </div>
                     </td>
-                    <td className="hidden lg:table-cell px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900 transition-colors duration-300">
+                    <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900 transition-colors duration-300">
                       <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                         {order.quantity}
                       </span>
                     </td>
-                    <td className="hidden md:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900 transition-colors duration-300">{safeRender(order.customer_name)}</div>
                         <div className="text-sm text-gray-500 transition-colors duration-300">{safeRender(order.customer_email)}</div>
@@ -627,14 +631,14 @@ export default function OrdersManager({ userId }: OrdersManagerProps) {
                     <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900 transition-colors duration-300">
                       {formatCurrency(order.total_amount)}
                     </td>
-                    <td className="hidden sm:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                       <div className="flex justify-center">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-all duration-300 hover:scale-110 ${getStatusColor(order.order_status)}`}>
                           {order.order_status}
                         </span>
                       </div>
                     </td>
-                    <td className="hidden lg:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                       <div className="flex justify-center">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-all duration-300 hover:scale-110 ${getPaymentStatusColor(order.payment_status)}`}>
                           {order.payment_status}

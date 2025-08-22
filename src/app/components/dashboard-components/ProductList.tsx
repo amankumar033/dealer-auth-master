@@ -340,9 +340,9 @@ export default function ProductList({
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg p-4 lg:p-6 transition-all duration-300 hover:shadow-xl">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 lg:mb-6 space-y-4 lg:space-y-0">
+            <div className="bg-white lg:rounded-xl shadow-lg p-4 lg:p-6 transition-all -mx-4 lg:mx-1 duration-300 hover:shadow-xl">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 lg:mb-6 space-y-4 lg:space-y-0 px-4 lg:px-6">
         <div className="flex flex-col space-y-2">
           <h2 className="text-xl lg:text-2xl font-bold text-black bg-gradient-to-r from-gray-800 to-blue-600 bg-clip-text text-transparent">
             {selectedCategory ? `Products in ${selectedCategory.name}` : 'My Products'}
@@ -375,7 +375,7 @@ export default function ProductList({
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="mb-4 lg:mb-6">
+      <div className="mb-4 lg:mb-6 px-4 lg:px-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 space-y-4 lg:space-y-0">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <input
@@ -460,24 +460,27 @@ export default function ProductList({
       </div>
 
       {/* Products Table */}
-      <div className="overflow-x-auto rounded-xl shadow-lg">
+      <div className="overflow-x-auto rounded-xl shadow-lg px-4 lg:px-6">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gradient-to-r from-gray-50 to-blue-50">
             <tr>
               <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                 Product
               </th>
-              <th className="hidden md:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                 Category
               </th>
               <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                 Price
               </th>
-              <th className="hidden sm:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                 Stock
               </th>
-              <th className="hidden lg:table-cell px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                 Status
+              </th>
+              <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                Featured
               </th>
               <th className="px-3 lg:px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                 Actions
@@ -519,7 +522,7 @@ export default function ProductList({
                     </div>
                   </div>
                 </td>
-                <td className="hidden md:table-cell px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700 transition-colors duration-300">
+                <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700 transition-colors duration-300">
                   {getCategoryName(product.category_id)}
                 </td>
                 <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
@@ -528,7 +531,7 @@ export default function ProductList({
                     <div className="text-xs lg:text-sm text-black line-through transition-colors duration-300">{formatCurrency(product.original_price)}</div>
                   )}
                 </td>
-                <td className="hidden sm:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
+                <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                   <div className="flex justify-center">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-all duration-300 hover:scale-110 ${
                       product.stock_quantity > 10 ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800' :
@@ -539,12 +542,21 @@ export default function ProductList({
                     </span>
                   </div>
                 </td>
-                <td className="hidden lg:table-cell px-3 lg:px-6 py-4 whitespace-nowrap">
+                <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
                   <div className="flex justify-center">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-all duration-300 hover:scale-110 ${
                       product.is_active ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800' : 'bg-gradient-to-r from-red-100 to-red-200 text-red-800'
                     }`}>
                       {product.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-3 lg:px-6 py-4 whitespace-nowrap">
+                  <div className="flex justify-center">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-all duration-300 hover:scale-110 ${
+                      product.is_featured ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800' : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                    }`}>
+                      {product.is_featured ? 'Yes' : 'No'}
                     </span>
                   </div>
                 </td>

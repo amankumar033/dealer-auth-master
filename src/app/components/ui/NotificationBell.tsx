@@ -3,6 +3,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { formatRelativeTime } from '@/lib/utils';
+
+// Add custom styles for consistent scrollbar
+const scrollbarStyles = `
+  .notification-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .notification-scroll::-webkit-scrollbar-track {
+    background: #f3f4f6;
+  }
+  .notification-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+  .notification-scroll::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+`;
 import { 
   FiBell, 
   FiX, 
@@ -493,7 +510,9 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
   const readCount = notifications.filter(n => n.is_read).length;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
+      <div className="relative" ref={dropdownRef}>
       {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -509,16 +528,16 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
         )}
       </button>
 
-      {/* Notification Dropdown */}
-      {isOpen && createPortal(
-        <div 
-          className={`fixed top-16 bg-white rounded-xl shadow-2xl border border-gray-200 z-[2147483647] overflow-hidden ${
-            isDesktop ? 'w-96 max-h-[600px]' : 'w-[calc(100vw-32px)] max-w-sm max-h-[70vh] mx-auto left-4 right-4'
-          }`}
-          data-notification-panel
-        >
+                                                       {/* Notification Dropdown */}
+         {isOpen && createPortal(
+           <div 
+                           className={`fixed bg-white rounded-xl shadow-2xl border border-gray-200 z-[2147483647] overflow-hidden flex flex-col ${
+                isDesktop ? 'w-96 max-h-[600px] top-20 left-1/2 transform -translate-x-1/2 translate-x-[10px]' : 'w-[calc(100vw-30px)] max-w-sm max-h-[85vh] mx-auto left-4 right-4 top-16'
+              }`}
+             data-notification-panel
+           >
           {/* Header */}
-          <div className={`flex items-center justify-between ${isDesktop ? 'p-4' : 'p-3'} border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50`}>
+          <div className={`flex items-center justify-between ${isDesktop ? 'p-4' : 'p-3'} border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 flex-shrink-0`}>
             <h3 className={`${isDesktop ? 'text-lg' : 'text-base'} font-bold text-gray-900`}>Notifications</h3>
             <div className="flex items-center space-x-2">
               {unreadCount > 0 && (
@@ -548,7 +567,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
                   setSelectedNotification(null);
                 }}
                 className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition-all duration-200"
-              
+                style={{paddingTop: '-16px' }}
               >
                 <FiX className="w-4 h-4" />
               </button>
@@ -556,7 +575,7 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex border-b border-gray-200 bg-gray-50">
+          <div className="flex border-b border-gray-200 bg-gray-50 flex-shrink-0">
             <button
               onClick={() => setActiveTab('all')}
               className={`flex-1 ${isDesktop ? 'px-4 py-3' : 'px-3 py-2'} ${isDesktop ? 'text-sm' : 'text-xs'} font-medium transition-all duration-200 ${
@@ -590,7 +609,15 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
           </div>
 
           {/* Notifications List */}
-          <div className="max-h-96 overflow-y-auto bg-white">
+          <div 
+            className={`notification-scroll overflow-y-auto bg-white flex-1 ${isDesktop ? 'max-h-96' : 'min-h-0'}`}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#d1d5db #f3f4f6',
+              overflowY: 'scroll',
+              maxHeight: isDesktop ? '384px' : 'calc(85vh - 130px)' // Ensure footer is always visible
+            }}
+          >
             {loading ? (
               <div className="p-6 text-center text-gray-600">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -636,21 +663,21 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
 
                     <div className="flex items-start space-x-3 relative">
                       {/* Close button - Top right */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeNotification(notification.id);
-                        }}
-                        disabled={loadingStates[notification.id]}
-                        className={`absolute top-0 right-0 w-6 h-6 rounded-full transition-colors flex items-center justify-center ${
-                          loadingStates[notification.id] 
-                            ? 'text-gray-400 cursor-not-allowed' 
-                            : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-                        }`}
-                        style={{ marginTop: '-20px' }}
-                      >
-                        <FiX className="w-4 h-4 " />
-                      </button>
+                                             <button
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           removeNotification(notification.id);
+                         }}
+                         disabled={loadingStates[notification.id]}
+                         className={`absolute top-0 right-0 w-6 h-6 rounded-full transition-colors flex items-center justify-center ${
+                           loadingStates[notification.id] 
+                             ? 'text-gray-400 cursor-not-allowed' 
+                             : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                         }`}
+                         style={{ marginTop: '-10px' }}
+                       >
+                         <FiX className="w-4 h-4 " />
+                       </button>
 
                       <div className={`${isDesktop ? 'w-8 h-8' : 'w-6 h-6'} rounded-full flex items-center justify-center flex-shrink-0 ${getNotificationColor(notification.type)}`}>
                         {getNotificationIcon(notification.type)}
@@ -731,137 +758,125 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
                           )}
                         </div>
                         
-                        {/* Action Buttons */}
-                        <div className="flex space-x-2 items-center">
-                          {/* Accept/Reject buttons for order_placed notifications */}
-                          {notification.type === 'order_placed' && (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  acceptOrder(notification.id);
-                                }}
-                                disabled={acceptRejectLoading[notification.id]?.accept || acceptRejectLoading[notification.id]?.reject}
-                                className={`flex-shrink-0 font-medium transition-all duration-200 flex items-center justify-center ${
-                                  acceptRejectLoading[notification.id]?.accept
-                                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                    : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
-                                }`}
-                                style={{
-                                  fontSize: '12px',
-                                  width: isDesktop ? 'auto' : '145px',
-                                  height: isDesktop ? 'auto' : '30px',
-                                  padding: isDesktop ? '6px 12px' : '0px',
-                                  borderRadius: isDesktop ? '8px' : '4px',
-                                  boxSizing: 'border-box',
-                                  minWidth: isDesktop ? 'auto' : '145px',
-                                  maxWidth: isDesktop ? 'auto' : '145px',
-                                  minHeight: isDesktop ? 'auto' : '30px',
-                                  maxHeight: isDesktop ? 'auto' : '30px'
-                                }}
-                              >
-                                {acceptRejectLoading[notification.id]?.accept ? (
-                                  <>
-                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
-                                    Accepting...
-                                  </>
-                                ) : (
-                                  'Accept'
-                                )}
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  rejectOrder(notification.id);
-                                }}
-                                disabled={acceptRejectLoading[notification.id]?.accept || acceptRejectLoading[notification.id]?.reject}
-                                className={`flex-shrink-0 font-medium transition-all duration-200 flex items-center justify-center ${
-                                  acceptRejectLoading[notification.id]?.reject
-                                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                    : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
-                                }`}
-                                style={{
-                                  fontSize: '12px',
-                                  width: isDesktop ? 'auto' : '145px',
-                                  height: isDesktop ? 'auto' : '30px',
-                                  padding: isDesktop ? '6px 12px' : '0px',
-                                  borderRadius: isDesktop ? '8px' : '4px',
-                                  boxSizing: 'border-box',
-                                  minWidth: isDesktop ? 'auto' : '145px',
-                                  maxWidth: isDesktop ? 'auto' : '145px',
-                                  minHeight: isDesktop ? 'auto' : '30px',
-                                  maxHeight: isDesktop ? 'auto' : '30px'
-                                }}
-                              >
-                                {acceptRejectLoading[notification.id]?.reject ? (
-                                  <>
-                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
-                                    Rejecting...
-                                  </>
-                                ) : (
-                                  'Reject'
-                                )}
-                              </button>
-                            </>
-                          )}
+                                                 {/* Action Buttons */}
+                         <div className="flex space-x-2 items-center justify-between">
+                                                     {/* Accept/Reject buttons for order_placed notifications */}
+                           {notification.type === 'order_placed' && (
+                             <div className="flex space-x-2 w-full">
+                               <button
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   acceptOrder(notification.id);
+                                 }}
+                                 disabled={acceptRejectLoading[notification.id]?.accept || acceptRejectLoading[notification.id]?.reject}
+                                 className={`flex-1 font-medium transition-all duration-200 flex items-center justify-center ${
+                                   acceptRejectLoading[notification.id]?.accept
+                                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                     : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
+                                 }`}
+                                 style={{
+                                   fontSize: '12px',
+                                   height: isDesktop ? 'auto' : '30px',
+                                   padding: isDesktop ? '6px 12px' : '0px',
+                                   borderRadius: isDesktop ? '8px' : '4px',
+                                   boxSizing: 'border-box',
+                                   minHeight: isDesktop ? 'auto' : '30px',
+                                   maxHeight: isDesktop ? 'auto' : '30px'
+                                 }}
+                               >
+                                 {acceptRejectLoading[notification.id]?.accept ? (
+                                   <>
+                                     <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
+                                     Accepting...
+                                   </>
+                                 ) : (
+                                   'Accept'
+                                 )}
+                               </button>
+                               <button
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   rejectOrder(notification.id);
+                                 }}
+                                 disabled={acceptRejectLoading[notification.id]?.accept || acceptRejectLoading[notification.id]?.reject}
+                                 className={`flex-1 font-medium transition-all duration-200 flex items-center justify-center ${
+                                   acceptRejectLoading[notification.id]?.reject
+                                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                     : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
+                                 }`}
+                                 style={{
+                                   fontSize: '12px',
+                                   height: isDesktop ? 'auto' : '30px',
+                                   padding: isDesktop ? '6px 12px' : '0px',
+                                   borderRadius: isDesktop ? '8px' : '4px',
+                                   boxSizing: 'border-box',
+                                   minHeight: isDesktop ? 'auto' : '30px',
+                                   maxHeight: isDesktop ? 'auto' : '30px'
+                                 }}
+                               >
+                                 {acceptRejectLoading[notification.id]?.reject ? (
+                                   <>
+                                     <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
+                                     Rejecting...
+                                   </>
+                                 ) : (
+                                   'Reject'
+                                 )}
+                               </button>
+                             </div>
+                           )}
                           
-                          {/* Regular action buttons for other notifications */}
-                          {notification.type !== 'order_placed' && (
-                            <>
-                              {!notification.is_read && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    markAsRead(notification.id);
-                                  }}
-                                  disabled={loadingStates[notification.id]}
-                                  className={`flex-shrink-0 font-medium transition-all duration-200 flex items-center justify-center ${
-                                    loadingStates[notification.id]
-                                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                      : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:shadow-md'
-                                  }`}
-                                  style={{
-                                    fontSize: '12px',
-                                    width: isDesktop ? 'auto' : '145px',
-                                    height: isDesktop ? 'auto' : '30px',
-                                    padding: isDesktop ? '6px 12px' : '0px',
-                                    borderRadius: isDesktop ? '8px' : '4px',
-                                    boxSizing: 'border-box',
-                                    minWidth: isDesktop ? 'auto' : '145px',
-                                    maxWidth: isDesktop ? 'auto' : '145px',
-                                    minHeight: isDesktop ? 'auto' : '30px',
-                                    maxHeight: isDesktop ? 'auto' : '30px'
-                                  }}
-                                >
-                                  Mark as read
-                                </button>
-                              )}
-                              {onNavigateToSpecificNotification && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setIsOpen(false);
-                                    onNavigateToSpecificNotification(notification.id.toString());
-                                  }}
-                                  className="flex-shrink-0 font-medium transition-all duration-200 flex items-center justify-center bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md"
-                                  style={{
-                                    fontSize: '12px',
-                                    width: isDesktop ? 'auto' : '145px',
-                                    height: isDesktop ? 'auto' : '30px',
-                                    padding: isDesktop ? '6px 12px' : '0px',
-                                    borderRadius: isDesktop ? '8px' : '4px',
-                                    boxSizing: 'border-box',
-                                    minWidth: isDesktop ? 'auto' : '145px',
-                                    maxWidth: isDesktop ? 'auto' : '145px',
-                                    minHeight: isDesktop ? 'auto' : '30px',
-                                    maxHeight: isDesktop ? 'auto' : '30px'
-                                  }}
-                                >
-                                  View Details
-                                </button>
-                              )}
-                            </>
-                          )}
+                                                     {/* Regular action buttons for other notifications */}
+                           {notification.type !== 'order_placed' && (
+                             <div className="flex space-x-2 w-full">
+                               {!notification.is_read && (
+                                 <button
+                                   onClick={(e) => {
+                                     e.stopPropagation();
+                                     markAsRead(notification.id);
+                                   }}
+                                   disabled={loadingStates[notification.id]}
+                                   className={`flex-1 font-medium transition-all duration-200 flex items-center justify-center ${
+                                     loadingStates[notification.id]
+                                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                       : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:shadow-md'
+                                   }`}
+                                   style={{
+                                     fontSize: '12px',
+                                     height: isDesktop ? 'auto' : '30px',
+                                     padding: isDesktop ? '6px 12px' : '0px',
+                                     borderRadius: isDesktop ? '8px' : '4px',
+                                     boxSizing: 'border-box',
+                                     minHeight: isDesktop ? 'auto' : '30px',
+                                     maxHeight: isDesktop ? 'auto' : '30px'
+                                   }}
+                                 >
+                                   Mark as read
+                                 </button>
+                               )}
+                               {onNavigateToSpecificNotification && (
+                                 <button
+                                   onClick={(e) => {
+                                     e.stopPropagation();
+                                     setIsOpen(false);
+                                     onNavigateToSpecificNotification(notification.id.toString());
+                                   }}
+                                   className="flex-1 font-medium transition-all duration-200 flex items-center justify-center bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md"
+                                   style={{
+                                     fontSize: '12px',
+                                     height: isDesktop ? 'auto' : '30px',
+                                     padding: isDesktop ? '6px 12px' : '0px',
+                                     borderRadius: isDesktop ? '8px' : '4px',
+                                     boxSizing: 'border-box',
+                                     minHeight: isDesktop ? 'auto' : '30px',
+                                     maxHeight: isDesktop ? 'auto' : '30px'
+                                   }}
+                                 >
+                                   View Details
+                                 </button>
+                               )}
+                             </div>
+                           )}
                         </div>
                       </div>
                     </div>
@@ -871,37 +886,38 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
             )}
           </div>
 
-          {/* Footer */}
-          {filteredNotifications.length > 0 && (
-            <div className="p-3 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span className="font-medium">Auto-refresh every 30s</span>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={fetchNotifications}
-                    className="text-blue-600 hover:text-blue-800 font-medium flex items-center transition-colors duration-200 hover:bg-blue-50 px-2 py-1 rounded"
+                    {/* Footer */}
+          <div className={`${isDesktop ? 'p-3' : 'p-2'} border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 flex-shrink-0`}>
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <span className="font-medium truncate mr-2">
+                {filteredNotifications.length > 0 
+                  ? (isDesktop ? 'Auto-refresh every 30s' : 'Auto-refresh 30s') 
+                  : (isDesktop ? 'No notifications to display' : 'No notifications')
+                }
+              </span>
+              <button
+                onClick={fetchNotifications}
+                className="text-blue-600 hover:text-blue-800 font-medium flex items-center transition-colors duration-200 hover:bg-blue-50 px-1 py-1 rounded text-xs whitespace-nowrap mr-2"
+              >
+                <FiRefreshCw className={`${isDesktop ? 'w-3 h-3 mr-1' : 'w-2.5 h-2.5 mr-0.5'}`} />
+                {isDesktop ? 'Refresh now' : 'Refresh'}
+              </button>
+              {onNavigateToNotifications && filteredNotifications.length > 0 && (
+               <button
+                 onClick={() => {
+                   setIsOpen(false);
+                   onNavigateToNotifications();
+                   // Ensure notifications list is up to date when navigating via footer button
+                   setTimeout(() => fetchNotifications(), 0);
+                 }}
+                    className="text-green-600 hover:text-green-800 font-medium flex items-center transition-colors duration-200 hover:bg-green-50 px-1 py-1 rounded text-xs whitespace-nowrap mr-1"
                   >
-                    <FiRefreshCw className="w-3 h-3 mr-1" />
-                    Refresh now
+                    <FiEye className={`${isDesktop ? 'w-3 h-3 mr-1' : 'w-2.5 h-2.5 mr-0.5'}`} />
+                    {isDesktop ? 'View All' : 'View All'}
                   </button>
-                  {onNavigateToNotifications && (
-                 <button
-                   onClick={() => {
-                     setIsOpen(false);
-                     onNavigateToNotifications();
-                     // Ensure notifications list is up to date when navigating via footer button
-                     setTimeout(() => fetchNotifications(), 0);
-                   }}
-                      className="text-green-600 hover:text-green-800 font-medium flex items-center transition-colors duration-200 hover:bg-green-50 px-2 py-1 rounded"
-                    >
-                      <FiEye className="w-3 h-3 mr-1" />
-                      View All
-                    </button>
-                  )}
-                </div>
-              </div>
+                )}
             </div>
-          )}
+          </div>
         </div>,
         document.body
       )}
@@ -1018,5 +1034,6 @@ export default function NotificationBell({ dealerId, onNavigateToNotifications, 
         </div>
       )}
     </div>
+    </>
   );
 } 

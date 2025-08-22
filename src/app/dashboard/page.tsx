@@ -751,7 +751,7 @@ export default function DealerDashboard() {
 
 
         {/* Dashboard Content */}
-        <main className="p-4 lg:p-6">
+        <main className={`${activeTab === 'services' ? 'py-4 px-2 lg:p-6' : activeTab === 'categories' ? 'py-4 lg:p-6' : activeTab === 'products' ? 'py-4 lg:p-6' : 'p-4 lg:p-6'}`}>
           {!dealerId && (
             <div className="text-center py-12">
               <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">

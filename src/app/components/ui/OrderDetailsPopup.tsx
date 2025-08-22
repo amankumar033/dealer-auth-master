@@ -149,8 +149,8 @@ export default function OrderDetailsPopup({
   if (!isOpen || !order) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col form-transition">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative w-full max-w-4xl mx-auto form-scale-enter">
+    <div className="min-h-screen bg-gray-50 flex flex-col form-transition -mx-2 lg:-mx-6">
+      <div className="bg-white rounded-lg  shadow-sm border border-gray-200 relative w-full max-w-4xl mx-auto form-scale-enter">
 
 
         {/* Header */}
@@ -171,7 +171,7 @@ export default function OrderDetailsPopup({
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg h-8 w-8 flex items-center justify-center"
             >
               <FiX className="w-5 h-5" />
             </button>
@@ -325,7 +325,7 @@ export default function OrderDetailsPopup({
             {/* Financial Details */}
             <div className="bg-white border border-purple-200 rounded-lg p-4">
               <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                <FiDollarSign className="w-4 h-4 mr-2 text-purple-600" />
+                                        <span className="w-4 h-4 mr-2 text-purple-600 font-bold text-lg mb-3">₹</span>
                 Financial Details
               </h3>
               <div className="space-y-2 text-sm text-gray-600">
@@ -369,7 +369,7 @@ export default function OrderDetailsPopup({
             <div className="grid grid-cols-2 lg:flex lg:justify-end gap-2 lg:gap-3">
               <button
                 onClick={onClose}
-                className="px-2 py-1 lg:px-4 lg:py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-xs lg:text-sm flex items-center justify-center"
+                className="px-2 h-6 lg:px-4 lg:h-10 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-xs lg:text-sm flex items-center justify-center"
               >
                 Close
               </button>
@@ -379,7 +379,7 @@ export default function OrderDetailsPopup({
                 <button
                   onClick={handleDeleteOrder}
                   disabled={deleting}
-                  className="px-2 py-1 lg:px-4 lg:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
+                  className="px-2 h-6 lg:px-4 lg:h-10 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                 >
                   {deleting ? (
                     <>
@@ -396,11 +396,15 @@ export default function OrderDetailsPopup({
               )}
               
               {/* Show update button for non-cancelled/non-rejected orders */}
-              {order.order_status !== 'cancelled' && order.order_status !== 'rejected' && !isOrderCompleted && (
+              {order.order_status !== 'cancelled' && order.order_status !== 'rejected' && (
                 <button
                   onClick={handleUpdateStatus}
-                  disabled={updating}
-                  className="px-2 py-1 lg:px-4 lg:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
+                  disabled={updating || order.order_status === 'delivered'}
+                  className={`px-2 h-6 lg:px-4 lg:h-10 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm ${
+                    order.order_status === 'delivered' 
+                      ? 'bg-green-100 text-green-800 cursor-default' 
+                      : 'bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                  }`}
                 >
                   {updating ? (
                     <>
@@ -410,17 +414,10 @@ export default function OrderDetailsPopup({
                   ) : (
                     <>
                       <FiCheckCircle className="w-3 h-3 lg:w-4 lg:h-4" />
-                      <span>Mark as Delivered</span>
+                      <span>{order.order_status === 'delivered' ? 'Order Delivered' : 'Mark as Delivered'}</span>
                     </>
                   )}
                 </button>
-              )}
-              
-              {isOrderCompleted && (
-                <div className="px-2 py-1 lg:px-4 lg:py-2 bg-green-100 text-green-800 rounded-lg flex items-center justify-center space-x-1 lg:space-x-2 text-xs lg:text-sm">
-                  <FiCheckCircle className="w-3 h-3 lg:w-4 lg:h-4" />
-                  <span>Order Delivered</span>
-                </div>
               )}
             </div>
           </div>
